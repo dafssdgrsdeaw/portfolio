@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FORGE FITNESS | パーソナルジム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --white: #f5f5f0;
+            --accent: #c8ff00;
+            --accent-dark: #a8d600;
+            --gray-900: #1a1a1a;
+            --gray-800: #2a2a2a;
+            --gray-600: #666;
+            --gray-400: #999;
+            --font-display: 'Oswald', sans-serif;
+            --font-body: 'Noto Sans JP', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: var(--font-body);
+            font-weight: 300;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* ===== UTILITY ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .accent { color: var(--accent); }
+
+        .section-label {
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes accentPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== HEADER / NAV ===== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 0;
+            transition: background 0.3s ease, padding 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(200, 255, 0, 0.1);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        nav {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        .nav-cta {
+            background: var(--accent);
+            color: var(--black);
+            padding: 10px 24px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        /* Mobile menu */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--white);
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -10%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(200, 255, 0, 0.03) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: 'FORGE';
+            position: absolute;
+            top: 50%;
+            right: -5%;
+            transform: translateY(-50%);
+            font-family: var(--font-display);
+            font-size: clamp(8rem, 20vw, 18rem);
+            font-weight: 900;
+            color: rgba(200, 255, 0, 0.03);
+            letter-spacing: -0.05em;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--accent);
+            border: 1px solid rgba(200, 255, 0, 0.3);
+            padding: 6px 16px;
+            margin-bottom: 32px;
+            animation: fadeUp 0.8s ease forwards;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -0.03em;
+            margin-bottom: 24px;
+            animation: fadeUp 0.8s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            color: var(--gray-400);
+            max-width: 480px;
+            margin-bottom: 40px;
+            animation: fadeUp 0.8s ease 0.4s forwards;
+            opacity: 0;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            animation: fadeUp 0.8s ease 0.6s forwards;
+            opacity: 0;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: var(--black);
+            padding: 16px 36px;
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '→';
+            transition: transform 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:hover::after {
+            transform: translateX(4px);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--white);
+            padding: 16px 36px;
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: 1px solid var(--gray-600);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            border-top: 1px solid var(--gray-800);
+            border-bottom: 1px solid var(--gray-800);
+            padding: 48px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            text-align: center;
+        }
+
+        .stat-item {
+            position: relative;
+        }
+
+        .stat-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 40px;
+            width: 1px;
+            background: var(--gray-800);
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            letter-spacing: 0.05em;
+        }
+
+        /* ===== FEATURES ===== */
+        .features {
+            padding: 120px 0;
+        }
+
+        .features-header {
+            max-width: 600px;
+            margin-bottom: 80px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+        }
+
+        .feature-card {
+            background: var(--gray-900);
+            padding: 48px 36px;
+            position: relative;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            background: var(--gray-800);
+        }
+
+        .feature-number {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            color: rgba(200, 255, 0, 0.1);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--gray-400);
+            line-height: 1.7;
+        }
+
+        /* ===== PROGRAM ===== */
+        .program {
+            padding: 120px 0;
+            background: var(--gray-900);
+        }
+
+        .program-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 80px;
+        }
+
+        .program-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .program-card {
+            background: var(--black);
+            border: 1px solid var(--gray-800);
+            padding: 48px 32px;
+            text-align: center;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .program-card.featured {
+            border-color: var(--accent);
+        }
+
+        .program-card.featured::before {
+            content: 'POPULAR';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--accent);
+            color: var(--black);
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            padding: 4px 16px;
+        }
+
+        .program-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+        }
+
+        .program-name {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .program-price {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .program-price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--gray-400);
+        }
+
+        .program-period {
+            font-size: 0.85rem;
+            color: var(--gray-400);
+            margin-bottom: 32px;
+        }
+
+        .program-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 36px;
+        }
+
+        .program-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-800);
+            font-size: 0.9rem;
+            color: var(--gray-400);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .program-features li::before {
+            content: '✓';
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .program-card .btn-primary {
+            width: 100%;
+            justify-content: center;
+            padding: 14px 24px;
+            font-size: 0.8rem;
+        }
+
+        .program-card .btn-outline {
+            width: 100%;
+            display: inline-flex;
+            justify-content: center;
+            background: transparent;
+            color: var(--white);
+            padding: 14px 24px;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: 1px solid var(--gray-600);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .program-card .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ===== TESTIMONIALS ===== */
+        .testimonials {
+            padding: 120px 0;
+        }
+
+        .testimonials-header {
+            max-width: 600px;
+            margin-bottom: 80px;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .testimonial-card {
+            background: var(--gray-900);
+            padding: 40px;
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            font-family: var(--font-display);
+            font-size: 5rem;
+            color: var(--accent);
+            opacity: 0.2;
+            position: absolute;
+            top: 16px;
+            left: 32px;
+            line-height: 1;
+        }
+
+        .testimonial-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .testimonial-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--gray-800);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--accent);
+        }
+
+        .testimonial-name {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .testimonial-detail {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+        }
+
+        /* ===== TRAINER ===== */
+        .trainer {
+            padding: 120px 0;
+            background: var(--gray-900);
+        }
+
+        .trainer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .trainer-image {
+            aspect-ratio: 3/4;
+            background: var(--gray-800);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .trainer-image-placeholder {
+            font-family: var(--font-display);
+            font-size: 6rem;
+            font-weight: 900;
+            color: rgba(200, 255, 0, 0.05);
+            letter-spacing: -0.05em;
+        }
+
+        .trainer-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to top, var(--gray-900), transparent);
+        }
+
+        .trainer-content h3 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .trainer-title {
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .trainer-content p {
+            color: var(--gray-400);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        .trainer-certs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .cert-tag {
+            background: var(--black);
+            border: 1px solid var(--gray-800);
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            letter-spacing: 0.05em;
+        }
+
+        /* ===== CTA ===== */
+        .cta {
+            padding: 120px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(200, 255, 0, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cta h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 20px;
+            letter-spacing: -0.03em;
+        }
+
+        .cta p {
+            color: var(--gray-400);
+            margin-bottom: 40px;
+            font-size: 1rem;
+        }
+
+        .cta .btn-primary {
+            font-size: 1rem;
+            padding: 20px 48px;
+        }
+
+        /* ===== ACCESS ===== */
+        .access {
+            padding: 120px 0;
+            background: var(--gray-900);
+        }
+
+        .access-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: start;
+        }
+
+        .access-map {
+            aspect-ratio: 4/3;
+            background: var(--gray-800);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            border: 1px solid var(--gray-800);
+        }
+
+        .access-info h3 {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .access-details {
+            list-style: none;
+        }
+
+        .access-details li {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+
+        .access-details li span:first-child {
+            color: var(--accent);
+            font-weight: 500;
+            min-width: 80px;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        .access-details li span:last-child {
+            color: var(--gray-400);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            border-top: 1px solid var(--gray-800);
+            padding: 48px 0;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-copy {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-links a {
+            color: var(--gray-600);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 968px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 32px;
+            }
+
+            .stat-item:nth-child(2)::after {
+                display: none;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 2px;
+            }
+
+            .program-cards {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trainer-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .access-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+
+            .stat-item::after {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: clamp(2.5rem, 12vw, 4rem);
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .hero-buttons .btn-primary,
+            .hero-buttons .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header id="header">
+        <div class="container">
+            <a href="#" class="logo">FORGE<span>.</span></a>
+            <nav>
+                <a href="#features">特徴</a>
+                <a href="#program">料金</a>
+                <a href="#testimonials">お客様の声</a>
+                <a href="#access">アクセス</a>
+                <a href="#cta" class="nav-cta">無料カウンセリング</a>
+            </nav>
+            <button class="menu-toggle" aria-label="メニュー">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-tag">Personal Training Gym</div>
+                <h1>BODY<br>FORGED<br><span class="accent">BY YOU.</span></h1>
+                <p>あなただけの身体は、あなた自身の手で鍛え上げる。<br>FORGE FITNESSは完全マンツーマンで理想の身体づくりをサポートします。</p>
+                <div class="hero-buttons">
+                    <a href="#cta" class="btn-primary">無料カウンセリング予約</a>
+                    <a href="#program" class="btn-secondary">料金を見る</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats-bar">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item fade-up">
+                    <div class="stat-number">98<span style="font-size:0.5em">%</span></div>
+                    <div class="stat-label">目標達成率</div>
+                </div>
+                <div class="stat-item fade-up">
+                    <div class="stat-number">2,400<span style="font-size:0.5em">+</span></div>
+                    <div class="stat-label">累計セッション数</div>
+                </div>
+                <div class="stat-item fade-up">
+                    <div class="stat-number">4.9</div>
+                    <div class="stat-label">Google 口コミ評価</div>
+                </div>
+                <div class="stat-item fade-up">
+                    <div class="stat-number">6<span style="font-size:0.5em">ヶ月</span></div>
+                    <div class="stat-label">平均目標到達期間</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="features-header fade-up">
+                <div class="section-label">Why Forge</div>
+                <h2 class="section-title">他のジムとは<br>何が違うのか。</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card fade-up">
+                    <div class="feature-number">01</div>
+                    <h3>完全オーダーメイド</h3>
+                    <p>体組成データ・生活リズム・食事傾向を分析し、あなただけのプログラムを設計。テンプレートは一切使いません。</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <div class="feature-number">02</div>
+                    <h3>食事管理サポート</h3>
+                    <p>毎日の食事をLINEで報告。管理栄養士監修のフィードバックで、無理のない食習慣を構築します。</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <div class="feature-number">03</div>
+                    <h3>手ぶらで通える</h3>
+                    <p>ウェア・シューズ・タオル・プロテイン全て無料レンタル。仕事帰りでも手ぶらでそのままトレーニングへ。</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <div class="feature-number">04</div>
+                    <h3>完全個室制</h3>
+                    <p>他の会員と顔を合わせることはありません。集中できる空間で、人目を気にせずトレーニングに打ち込めます。</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <div class="feature-number">05</div>
+                    <h3>科学的アプローチ</h3>
+                    <p>毎月の体組成測定とデータ分析で進捗を可視化。感覚ではなくエビデンスに基づいた指導を行います。</p>
+                </div>
+                <div class="feature-card fade-up">
+                    <div class="feature-number">06</div>
+                    <h3>卒業後もサポート</h3>
+                    <p>コース終了後も月1回の無料フォローセッションを3ヶ月間提供。リバウンドしない身体を作ります。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROGRAM / PRICING -->
+    <section class="program" id="program">
+        <div class="container">
+            <div class="program-header fade-up">
+                <div class="section-label">Program</div>
+                <h2 class="section-title">あなたに合った<br>プランを選ぶ。</h2>
+            </div>
+            <div class="program-cards">
+                <div class="program-card fade-up">
+                    <div class="program-name">Basic</div>
+                    <div class="program-price">¥98,000<span>/月</span></div>
+                    <div class="program-period">2ヶ月コース（全16回）</div>
+                    <ul class="program-features">
+                        <li>パーソナルトレーニング 50分×8回/月</li>
+                        <li>初回体組成分析</li>
+                        <li>トレーニングメニュー作成</li>
+                        <li>ウェア・シューズ無料レンタル</li>
+                    </ul>
+                    <a href="#cta" class="btn-outline">詳しく見る</a>
+                </div>
+                <div class="program-card featured fade-up">
+                    <div class="program-name">Standard</div>
+                    <div class="program-price">¥148,000<span>/月</span></div>
+                    <div class="program-period">3ヶ月コース（全24回）</div>
+                    <ul class="program-features">
+                        <li>パーソナルトレーニング 50分×8回/月</li>
+                        <li>毎日の食事指導（LINE）</li>
+                        <li>月次体組成分析レポート</li>
+                        <li>プロテイン・サプリ提供</li>
+                        <li>卒業後フォロー3ヶ月</li>
+                    </ul>
+                    <a href="#cta" class="btn-primary">無料カウンセリング</a>
+                </div>
+                <div class="program-card fade-up">
+                    <div class="program-name">Premium</div>
+                    <div class="program-price">¥228,000<span>/月</span></div>
+                    <div class="program-period">6ヶ月コース（全48回）</div>
+                    <ul class="program-features">
+                        <li>パーソナルトレーニング 50分×8回/月</li>
+                        <li>毎日の食事指導（LINE）</li>
+                        <li>週次体組成分析レポート</li>
+                        <li>管理栄養士との個別面談（月1）</li>
+                        <li>卒業後フォロー6ヶ月</li>
+                    </ul>
+                    <a href="#cta" class="btn-outline">詳しく見る</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="testimonials-header fade-up">
+                <div class="section-label">Testimonials</div>
+                <h2 class="section-title">お客様の声。</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card fade-up">
+                    <p class="testimonial-text">3ヶ月で体脂肪率が28%から19%まで落ちました。食事指導が特に良くて、無理なく続けられたのが大きかったです。今でもリバウンドしていません。</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">T.K</div>
+                        <div>
+                            <div class="testimonial-name">T.K 様</div>
+                            <div class="testimonial-detail">30代男性 / Standard 3ヶ月コース</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-up">
+                    <p class="testimonial-text">運動経験ゼロだったので最初は不安でしたが、自分のペースに合わせてくれるので安心でした。今では週2の運動が習慣になっています。</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">M.S</div>
+                        <div>
+                            <div class="testimonial-name">M.S 様</div>
+                            <div class="testimonial-detail">20代女性 / Basic 2ヶ月コース</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-up">
+                    <p class="testimonial-text">他のジムで挫折した経験がありましたが、ここは毎回のトレーニングが楽しくて全く苦にならなかった。結果が数字で見えるのもモチベーションになりました。</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">Y.H</div>
+                        <div>
+                            <div class="testimonial-name">Y.H 様</div>
+                            <div class="testimonial-detail">40代男性 / Premium 6ヶ月コース</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-up">
+                    <p class="testimonial-text">産後の体型戻しで通い始めました。子連れ対応のセッション枠があって本当に助かりました。半年で妊娠前の体型に戻れました。</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">A.M</div>
+                        <div>
+                            <div class="testimonial-name">A.M 様</div>
+                            <div class="testimonial-detail">30代女性 / Standard 3ヶ月コース</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRAINER -->
+    <section class="trainer" id="trainer">
+        <div class="container">
+            <div class="trainer-grid">
+                <div class="trainer-image fade-up">
+                    <div class="trainer-image-placeholder">PHOTO</div>
+                </div>
+                <div class="trainer-content fade-up">
+                    <div class="section-label">Head Trainer</div>
+                    <h3>山田 太郎</h3>
+                    <div class="trainer-title">Founder & Head Trainer</div>
+                    <p>大手フィットネスクラブで10年間トレーナーを務めた後、「一人ひとりに本当に合ったトレーニングを」という想いでFORGE FITNESSを設立。</p>
+                    <p>これまでに500名以上のクライアントの目標達成をサポート。科学的根拠に基づいた指導で、確実に結果を出すことをお約束します。</p>
+                    <div class="trainer-certs">
+                        <span class="cert-tag">NSCA-CSCS</span>
+                        <span class="cert-tag">NESTA-PFT</span>
+                        <span class="cert-tag">管理栄養士監修</span>
+                        <span class="cert-tag">機能解剖学修了</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" id="cta">
+        <div class="container">
+            <div class="cta-content fade-up">
+                <div class="section-label">Free Counseling</div>
+                <h2>まずは無料で<br><span class="accent">体験</span>してみる。</h2>
+                <p>無料カウンセリングでは、体組成分析・目標設定・最適プランのご提案を60分かけて行います。強引な勧誘は一切ありません。</p>
+                <a href="#" class="btn-primary">無料カウンセリングを予約する</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACCESS -->
+    <section class="access" id="access">
+        <div class="container">
+            <div class="access-grid">
+                <div class="fade-up">
+                    <div class="section-label">Access</div>
+                    <h2 class="section-title">アクセス</h2>
+                    <div class="access-map">Google Map 埋め込みエリア</div>
+                </div>
+                <div class="fade-up">
+                    <h3 class="access-info">店舗情報</h3>
+                    <ul class="access-details">
+                        <li>
+                            <span>住所</span>
+                            <span>東京都渋谷区神南1-2-3 FORGEビル 3F</span>
+                        </li>
+                        <li>
+                            <span>最寄り駅</span>
+                            <span>JR渋谷駅 ハチ公口より徒歩5分</span>
+                        </li>
+                        <li>
+                            <span>営業時間</span>
+                            <span>7:00〜23:00（最終受付 22:00）</span>
+                        </li>
+                        <li>
+                            <span>定休日</span>
+                            <span>年中無休（年末年始除く）</span>
+                        </li>
+                        <li>
+                            <span>電話</span>
+                            <span>03-XXXX-XXXX</span>
+                        </li>
+                        <li>
+                            <span>メール</span>
+                            <span>info@forge-fitness.jp</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-copy">&copy; 2025 FORGE FITNESS. All rights reserved.</div>
+                <div class="footer-links">
+                    <a href="#">プライバシーポリシー</a>
+                    <a href="#">特定商取引法に基づく表記</a>
+                    <a href="#">利用規約</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+        // Header scroll effect
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
